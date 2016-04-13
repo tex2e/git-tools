@@ -50,7 +50,7 @@ function install_git {
   wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
-  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools NO_OPENSSL=1 NO_CURL=1
+  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools --with-expat
   make &&
   make install &&
   success "installed git to $HOME/picnic-tools"
@@ -60,8 +60,9 @@ function install_curl {
   cd ~/picnic-tmp
   wget http://www.execve.net/curl/curl-7.48.0.tar.gz
   tar zxvf curl-7.48.0.tar.gz
+#  apt-get source libcurl-dev
   cd curl-7.48.0
-  ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools 
+  ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools no-static
   make &&
   make install &&
   success "installed curl to $HOME/picnic-tools"
@@ -72,7 +73,7 @@ function install_ssl {
   wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
   tar zxvf openssl-1.0.2g.tar.gz
   cd openssl-1.0.2g
-  ./configure --prefix=$HOME/picnic-tools shared zlib
+  ./config --prefix=$HOME/picnic-tools shared zlib-dynamic
   make &&
   make install &&
   success "installed openssl to $HOME/picnic-tools"
