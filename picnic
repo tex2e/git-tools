@@ -61,10 +61,21 @@ function install_curl {
   wget http://www.execve.net/curl/curl-7.48.0.tar.gz
   tar zxvf curl-7.48.0.tar.gz
   cd curl-7.48.0
-  ./configure --with-ssl --prefix=$HOME/picnic-tools 
+  ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools 
   make &&
   make install &&
   success "installed curl to $HOME/picnic-tools"
+}
+
+function install_ssl {
+  cd ~/picnic-tmp
+  wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
+  tar zxvf openssl-1.0.2g.tar.gz
+  cd openssl-1.0.2g
+  ./configure --prefix=$HOME/picnic-tools shared zlib
+  make &&
+  make install &&
+  success "installed openssl to $HOME/picnic-tools"
 }
 
 # SUBCOMMANDS
@@ -72,17 +83,10 @@ function install_curl {
 function picnic-unpack {
   check_os
   mkdir ~/picnic-tmp
-  # case "$(check_available curl)" in
-  #   0 )
-  #     $CURLDIR="$(which curl)"
-  #     ;;
-  #   1 )
-  #     $CURLDIR="$HOME/picnic-tools"
-  #     install_curl
-  #     ;;
-  # esac
-  install_curl
+
   install_zlib
+  install_ssl
+  install_curl
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
 }
