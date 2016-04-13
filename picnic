@@ -59,7 +59,7 @@ function install_git {
 function install_curl {
   cd ~/picnic-tmp
   wget https://github.com/curl/curl/archive/curl-7_48_0.tar.gz
-  tar tar zxvf curl-7_48_0.tar.gz
+  tar zxvf curl-7_48_0.tar.gz
   cd curl-7_48_0
   ./configure --prefix=$HOME/picnic-tools
   make &&
@@ -81,9 +81,11 @@ function picnic-unpack {
   #     install_curl
   #     ;;
   # esac
+  install_zlib
+
   $CURLDIR="$HOME/picnic-tools"
   install_curl
-  install_zlib
+
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
 }
