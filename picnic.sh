@@ -40,6 +40,7 @@ function install_zlib {
   ./configure --prefix=$HOME/picnic
   make &&
   make install &&
+  success "installed zlib to $HOME/picnic"
   export CPPFLAGS="-I$HOME/picnic/include" LDFLAGS="-L$HOME/picnic/lib"
 }
 
@@ -51,7 +52,8 @@ function install_git {
   cd git-2.8.1
   ./configure --prefix=$HOME/picnic --with-curl=$CURLDIR NO_OPENSSL=1 NO_CURL=1
   make &&
-  make install
+  make install &&
+  success "installed git to $HOME/picnic"
 }
 
 function install_curl {
@@ -61,7 +63,8 @@ function install_curl {
   cd curl-7_48_0
   ./configure --prefix=$HOME/picnic
   make &&
-  make install
+  make install &&
+  success "installed curl to $HOME/picnic"
 }
 
 # SUBCOMMANDS
