@@ -58,9 +58,9 @@ function install_git {
 
 function install_curl {
   cd ~/picnic-tmp
-  wget https://github.com/curl/curl/archive/curl-7_48_0.tar.gz
-  tar zxvf curl-7_48_0.tar.gz
-  cd curl-7_48_0
+  wget https://curl.haxx.se/download/curl-7.48.0.tar.gz
+  tar curl-7.48.0.tar.gz
+  cd curl-7.48.0
   ./configure --prefix=$HOME/picnic-tools
   make &&
   make install &&
