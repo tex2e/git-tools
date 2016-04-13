@@ -61,7 +61,7 @@ function install_curl {
   wget http://www.execve.net/curl/curl-7.48.0.tar.gz
   tar zxvf curl-7.48.0.tar.gz
   cd curl-7.48.0
-  ./configure --prefix=$HOME/picnic-tools
+  ./configure --prefix=$HOME/picnic-tools --with-ssl=/usr/local/ssl
   make &&
   make install &&
   success "installed curl to $HOME/picnic-tools"
