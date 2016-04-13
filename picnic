@@ -61,7 +61,7 @@ function install_curl {
   wget http://www.execve.net/curl/curl-7.48.0.tar.gz
   tar zxvf curl-7.48.0.tar.gz
   cd curl-7.48.0
-  ./configure --prefix=$HOME/picnic-tools --with-ssl=/usr/local/ssl
+  ./configure --with-ssl --prefix=$HOME/picnic-tools 
   make &&
   make install &&
   success "installed curl to $HOME/picnic-tools"
@@ -81,10 +81,8 @@ function picnic-unpack {
   #     install_curl
   #     ;;
   # esac
-  install_zlib
-
   install_curl
-
+  install_zlib
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
 }
