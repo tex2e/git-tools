@@ -33,51 +33,51 @@ function check_available {
 }
 
 function install_zlib {
-  cd ~/picnic
+  cd ~/picnic-tmp
   wget http://zlib.net/zlib-1.2.8.tar.gz
   tar zxvf zlib-1.2.8.tar.gz
   cd zlib-1.2.8
-  ./configure --prefix=$HOME/picnic
+  ./configure --prefix=$HOME/picnic-tools
   make &&
   make install &&
-  success "installed zlib to $HOME/picnic"
-  export CPPFLAGS="-I$HOME/picnic/include" LDFLAGS="-L$HOME/picnic/lib"
+  success "installed zlib to $HOME/picnic-tools"
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
 }
 
 
 function install_git {
-  cd ~/picnic
+  cd ~/picnic-tmp
   wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
-  ./configure --prefix=$HOME/picnic --with-curl=$CURLDIR NO_OPENSSL=1 NO_CURL=1
+  ./configure --prefix=$HOME/picnic-tools --with-curl=$CURLDIR NO_OPENSSL=1 NO_CURL=1
   make &&
   make install &&
-  success "installed git to $HOME/picnic"
+  success "installed git to $HOME/picnic-tools"
 }
 
 function install_curl {
-  cd ~/picnic
+  cd ~/picnic-tmp
   wget https://github.com/curl/curl/archive/curl-7_48_0.tar.gz
   tar tar zxvf curl-7_48_0.tar.gz
   cd curl-7_48_0
-  ./configure --prefix=$HOME/picnic
+  ./configure --prefix=$HOME/picnic-tools
   make &&
   make install &&
-  success "installed curl to $HOME/picnic"
+  success "installed curl to $HOME/picnic-tools"
 }
 
 # SUBCOMMANDS
 
 function picnic-unpack {
   check_os
-  mkdir ~/picnic
+  mkdir ~/picnic-tmp
   case "$(check_available curl)" in
     0 )
       $CURLDIR="$(which curl)"
       ;;
     1 )
-      $CURLDIR="$HOME/picnic"
+      $CURLDIR="$HOME/picnic-tools"
       install_curl
       ;;
   esac
@@ -87,8 +87,8 @@ function picnic-unpack {
 }
 
 function picnic-remove {
-  if [ -e ~/picnic ]; then
-    rm -rf ~/picnic
+  if [ -e ~/picnic-tools ]; then
+    rm -rf ~/picnic-tools
   fi
 }
 
