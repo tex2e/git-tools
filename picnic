@@ -72,15 +72,17 @@ function install_curl {
 function picnic-unpack {
   check_os
   mkdir ~/picnic-tmp
-  case "$(check_available curl)" in
-    0 )
-      $CURLDIR="$(which curl)"
-      ;;
-    1 )
-      $CURLDIR="$HOME/picnic-tools"
-      install_curl
-      ;;
-  esac
+  # case "$(check_available curl)" in
+  #   0 )
+  #     $CURLDIR="$(which curl)"
+  #     ;;
+  #   1 )
+  #     $CURLDIR="$HOME/picnic-tools"
+  #     install_curl
+  #     ;;
+  # esac
+  $CURLDIR="$HOME/picnic-tools"
+  install_curl
   install_zlib
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
@@ -88,7 +90,7 @@ function picnic-unpack {
 
 function picnic-remove {
   if [ -e ~/picnic-tools ]; then
-    rm -rf ~/picnic-tools
+    rm -rf ~/picnic-*
   fi
 }
 
