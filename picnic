@@ -48,7 +48,6 @@ function install_zlib {
   make &&
   make install &&
   success "installed zlib to $HOME/picnic-tools"
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
 }
 
 
@@ -56,7 +55,7 @@ function install_git {
   cd ~/picnic-tmp
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
-  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/lib
+  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/
   make &&
   make install &&
   success "installed git to $HOME/picnic-tools"
@@ -69,8 +68,9 @@ function install_curl {
   ar xv libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
   tar zxvf data.tar.gz
   mv ./usr/* ~/picnic-tools
-  mv ~/picnic-tools/lib/x86_64-linux-gnu/* ~/picnic-tools/lib
-  rm -rf x86_64-linux-gnu/
+  # mv ~/picnic-tools/lib/x86_64-linux-gnu/* ~/picnic-tools/lib
+  # rm -rf x86_64-linux-gnu/
+
   # cd curl-7.48.0
   # ./buildconf
   # ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools
@@ -96,6 +96,7 @@ function picnic-unpack {
   mkdir ~/picnic-tmp
   mkdir ~/picnic-tools
   package_download
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
   install_curl
   install_zlib
   install_ssl
@@ -113,6 +114,7 @@ function picnic-reunpack {
     rm -rf picnic-tools/
   fi
   mkdir ~/picnic-tools
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
   install_curl
   install_zlib
   install_ssl
