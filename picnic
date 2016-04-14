@@ -32,9 +32,16 @@ function check_available {
   return $?
 }
 
-function install_zlib {
+function package_download {
   cd ~/picnic-tmp
   wget http://zlib.net/zlib-1.2.8.tar.gz
+  wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
+  wget http://security.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
+  wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
+}
+
+function install_zlib {
+  cd ~/picnic-tmp
   tar zxvf zlib-1.2.8.tar.gz
   cd zlib-1.2.8
   ./configure --prefix=$HOME/picnic-tools
@@ -47,7 +54,6 @@ function install_zlib {
 
 function install_git {
   cd ~/picnic-tmp
-  wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
   ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/lib
@@ -58,13 +64,14 @@ function install_git {
 
 function install_curl {
   cd ~/picnic-tmp
-#  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
-  wget http://security.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
-#  tar zxvf curl-7.48.0.tar.gz
+  # wget http://www.execve.net/curl/curl-7.48.0.tar.gz
+  # tar zxvf curl-7.48.0.tar.gz
   ar xv libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
   tar zxvf data.tar.gz
   mv ./usr/* ~/picnic-tools
-#  cd curl-7.48.0
+  mv ~/picnic-tools/lib/x86-_64-linux-gnu/ ~/picnic-tools/lib
+  rm -rf x86-_64-linux-gnu/
+  # cd curl-7.48.0
   # ./buildconf
   # ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools
   # make &&
@@ -74,7 +81,6 @@ function install_curl {
 
 function install_ssl {
   cd ~/picnic-tmp
-  wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
   tar zxvf openssl-1.0.2g.tar.gz
   cd openssl-1.0.2g
   ./config --prefix=$HOME/picnic-tools shared zlib-dynamic
@@ -88,12 +94,36 @@ function install_ssl {
 function picnic-unpack {
   check_os
   mkdir ~/picnic-tmp
-
+  mkdir ~/picnic-tools
+  package_download
   install_curl
   install_zlib
-#  install_ssl
+  install_ssl
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
+}
+
+function picnic-reunpack {
+  check_os
+  if [ ! -e picnic-tmp/ ]; then
+    echo "packages not found in local, try 'picnic unpack'"
+    exit 1
+  fi
+  if [ -e picnic-tools ];then
+    rm -rf picnic-tools/
+  fi
+  mkdir ~/picnic-tools
+  install_curl
+  install_zlib
+  install_ssl
+  install_git
+}
+
+function picnic-test {
+  cd ~/picnic-tools/bin
+  ./git clone https://github.com/nobuyo/picnic.git || exit 1
+  success "Git installed successfully"
+  exit 0
 }
 
 function picnic-remove {
