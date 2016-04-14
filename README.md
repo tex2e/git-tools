@@ -9,4 +9,6 @@ picnic
 
 ## SUBCOMMANDS
 - `unpack`
+	* deploy your tools
 - `remove`
+	* rm all packages
