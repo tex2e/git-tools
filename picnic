@@ -50,7 +50,7 @@ function install_git {
   wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
-  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools --with-expat
+  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/lib
   make &&
   make install &&
   success "installed git to $HOME/picnic-tools"
@@ -61,6 +61,7 @@ function install_curl {
   wget http://www.execve.net/curl/curl-7.48.0.tar.gz
   tar zxvf curl-7.48.0.tar.gz
   cd curl-7.48.0
+  ./buildconf
   ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools shared
   make &&
   make install &&
