@@ -58,13 +58,17 @@ function install_git {
 
 function install_curl {
   cd ~/picnic-tmp
-  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
-  tar zxvf curl-7.48.0.tar.gz
-  cd curl-7.48.0
-  ./buildconf
-  ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools shared
-  make &&
-  make install &&
+#  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
+  wget http://security.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
+#  tar zxvf curl-7.48.0.tar.gz
+  ar xv libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
+  tar zxvf data.tar.gz
+  mv ./usr/* ~/picnic-tools
+#  cd curl-7.48.0
+  # ./buildconf
+  # ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools
+  # make &&
+  # make install &&
   success "installed curl to $HOME/picnic-tools"
 }
 
@@ -85,9 +89,9 @@ function picnic-unpack {
   check_os
   mkdir ~/picnic-tmp
 
-  install_zlib
-  install_ssl
   install_curl
+  install_zlib
+#  install_ssl
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
 }
