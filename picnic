@@ -69,8 +69,8 @@ function install_curl {
   ar xv libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
   tar zxvf data.tar.gz
   mv ./usr/* ~/picnic-tools
-  mv ~/picnic-tools/lib/x86-_64-linux-gnu/ ~/picnic-tools/lib
-  rm -rf x86-_64-linux-gnu/
+  mv ~/picnic-tools/lib/x86_64-linux-gnu/ ~/picnic-tools/lib
+  rm -rf x86_64-linux-gnu/
   # cd curl-7.48.0
   # ./buildconf
   # ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools
