@@ -36,8 +36,9 @@ function package_download {
   cd ~/picnic-tmp
   wget http://zlib.net/zlib-1.2.8.tar.gz
   wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
-  wget http://security.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
+  # wget http://security.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
   wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
+  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
 }
 
 function install_zlib {
@@ -55,7 +56,7 @@ function install_git {
   cd ~/picnic-tmp
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
-  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/
+  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/bin/curl --with-openssl=$HOME/picnic-tools/bin/openssl
   make &&
   make install &&
   success "installed git to $HOME/picnic-tools"
@@ -70,7 +71,6 @@ function install_curl {
   # mv ~/picnic-tools/lib/x86_64-linux-gnu/* ~/picnic-tools/lib
   # rm -rf x86_64-linux-gnu/
 
-  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
   tar zxvf curl-7.48.0.tar.gz
   cd curl-7.48.0
   ./buildconf
