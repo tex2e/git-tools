@@ -63,19 +63,20 @@ function install_git {
 
 function install_curl {
   cd ~/picnic-tmp
-  # wget http://www.execve.net/curl/curl-7.48.0.tar.gz
-  # tar zxvf curl-7.48.0.tar.gz
-  ar xv libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
-  tar zxvf data.tar.gz
-  mv ./usr/* ~/picnic-tools
+
+  # ar xv libcurl4-openssl-dev_7.22.0-3ubuntu4.15_amd64.deb
+  # tar zxvf data.tar.gz
+  # mv ./usr/* ~/picnic-tools
   # mv ~/picnic-tools/lib/x86_64-linux-gnu/* ~/picnic-tools/lib
   # rm -rf x86_64-linux-gnu/
 
-  # cd curl-7.48.0
-  # ./buildconf
-  # ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools
-  # make &&
-  # make install &&
+  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
+  tar zxvf curl-7.48.0.tar.gz
+  cd curl-7.48.0
+  ./buildconf
+  ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools
+  make &&
+  make install &&
   success "installed curl to $HOME/picnic-tools"
 }
 
@@ -97,9 +98,9 @@ function picnic-unpack {
   mkdir ~/picnic-tools
   package_download
   export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
-  install_curl
   install_zlib
   install_ssl
+  install_curl
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
 }
@@ -115,9 +116,9 @@ function picnic-reunpack {
   fi
   mkdir ~/picnic-tools
   export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
-  install_curl
   install_zlib
   install_ssl
+  install_curl
   install_git
 }
 
