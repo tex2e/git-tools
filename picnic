@@ -29,7 +29,7 @@ function show_result {
 function check_os {
   case ${OSTYPE} in
     linux*)
-      success "The system is $(OSTYPE), ready to deploy"
+      success "The system is $OSTYPE, ready to deploy"
       ;;
     *)
       error "$OSTYPE is NOT supported, exitting"
@@ -122,7 +122,7 @@ function picnic-unpack {
   mkdir ~/picnic-tmp
   mkdir ~/picnic-tools
   package_download
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib" LIBS="-lcurl -lssl"
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
   echo "picnic unpack $(date)" > ~/picnic-tmp/install.log
   install_zlib
   install_ssl
@@ -142,7 +142,7 @@ function picnic-reunpack {
     rm -rf picnic-tools/
   fi
   mkdir ~/picnic-tools
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib" LIBS="-lcurl -lssl"
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
   echo "picnic reunpack $(date)" > ~/picnic-tmp/install.log
   install_zlib
   install_ssl
