@@ -122,9 +122,10 @@ function picnic-unpack {
   mkdir ~/picnic-tmp
   mkdir ~/picnic-tools
   package_download
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib -lcurl -lidn -lssl -lcrypto -lz"
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
   echo "picnic unpack $(date)" > ~/picnic-tmp/install.log
   install_zlib
+  export LDFLAGS="-L$HOME/picnic-tools/lib -lcurl -lidn -lssl -lcrypto -lz"
   install_ssl
   install_curl
   install_expat
@@ -145,6 +146,7 @@ function picnic-reunpack {
   export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
   echo "picnic reunpack $(date)" > ~/picnic-tmp/install.log
   install_zlib
+ export LDFLAGS="-L$HOME/picnic-tools/lib -lcurl -lidn -lssl -lcrypto -lz"
   install_ssl
   install_curl
   install_expat
