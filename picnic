@@ -69,7 +69,7 @@ function install_git {
   echo "=========INSTALLING GIT=========" >> ~/picnic-tmp/install.log 
   tar zxf git-2.8.1.tar.gz >> ~/picnic-tmp/install.log &&
   cd git-2.8.1 &&
-  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools --with-expat=$HOME/picnic-tools  >> ~/picnic-tmp/install.log &&
+  ./configure --prefix=$HOME/picnic-tools --with-expat=$HOME/picnic-tools --with-curl=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
   make CURLDIR=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
   make install  >> ~/picnic-tmp/install.log
   show_result $? "git"
@@ -122,7 +122,7 @@ function picnic-unpack {
   mkdir ~/picnic-tmp
   mkdir ~/picnic-tools
   package_download
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib" LD_LIBRARY_PATH="~/picnic-tools/lib"
+  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib" LD_LIBRARY_PATH="$HOME/picnic-tools/lib/"
   echo "picnic unpack $(date)" > ~/picnic-tmp/install.log
   install_zlib
   install_ssl
