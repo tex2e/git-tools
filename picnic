@@ -70,7 +70,7 @@ function install_git {
   tar zxf git-2.8.1.tar.gz >> ~/picnic-tmp/install.log &&
   cd git-2.8.1 &&
   ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/ --with-expat=$HOME/picnic-tools  >> ~/picnic-tmp/install.log &&
-  make  >> ~/picnic-tmp/install.log &&
+  make CURLDIR=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
   make install  >> ~/picnic-tmp/install.log
   show_result $? "git"
 }
