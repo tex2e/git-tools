@@ -80,7 +80,6 @@ function install_curl {
   echo "=========INSTALLING CURL=========" >> ~/picnic-tmp/install.log 
   tar zxf curl-7.48.0.tar.gz >> ~/picnic-tmp/install.log &&
   cd curl-7.48.0 &&
-  ./buildconf >> ~/picnic-tmp/install.log &&
   ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
   make >> ~/picnic-tmp/install.log &&
   make install >> ~/picnic-tmp/install.log
