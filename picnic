@@ -34,11 +34,11 @@ function check_available {
 
 function package_download {
   cd ~/picnic-tmp
-  wget http://zlib.net/zlib-1.2.8.tar.gz
-  wget https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz
-  wget https://osdn.jp/projects/sfnet_expat/downloads/expat/2.1.0/expat-2.1.0.tar.gz
-  wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
-  wget http://www.execve.net/curl/curl-7.48.0.tar.gz
+  wget "http://zlib.net/zlib-1.2.8.tar.gz"
+  wget "https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
+  wget "http://downloads.sourceforge.net/project/expat/expat/2.1.1/expat-2.1.1.tar.bz2?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fexpat%2F&ts=1460701353&use_mirror=ufpr"
+  wget "https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
+  wget "http://www.execve.net/curl/curl-7.48.0.tar.gz"
 }
 
 function install_zlib {
@@ -56,7 +56,7 @@ function install_git {
   cd ~/picnic-tmp
   tar zxvf git-2.8.1.tar.gz
   cd git-2.8.1
-  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/bin/curl --with-openssl=$HOME/picnic-tools/bin/openssl
+  ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/ --with-expat=$HOME/picnic-tools
   make &&
   make install &&
   success "installed git to $HOME/picnic-tools"
@@ -94,7 +94,7 @@ function install_expat {
   cd ~/picnic-tmp
   tar zxvf expat-2.1.0.tar.gz
   cd expat-2.1.0
-  ./config --prefix=$HOME/picnic-tools --disable-static
+  ./configure --prefix=$HOME/picnic-tools --disable-static
   make &&
   make install &&
   success "installed expat to $HOME/picnic-tools"
