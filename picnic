@@ -15,6 +15,17 @@ function success {
   echo -e "\033[32mSuccess\033[m" "$*"
 }
 
+function show_result {
+  case "$1" in
+    0)
+      success "installed $2 to $HOME/picnic-tools"
+      ;;
+    *)
+      error "failed install $2 ith $1, see ~/picnic-tmp/install.log to more info"
+      ;;
+  esac
+}
+
 function check_os {
   case ${OSTYPE} in
     linux*)
@@ -48,14 +59,7 @@ function install_zlib {
   ./configure --prefix=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
   make >> ~/picnic-tmp/install.log &&
   make install >> ~/picnic-tmp/install.log
-  case "$?" in
-    0)
-    success "installed zlib to $HOME/picnic-tools"
-    ;;
-    1)
-    error "failed install zlib, see ~/picnic-tmp/install.log to more info"
-    ;;
-  esac
+  show_result $? "zlib"
 }
 
 
@@ -66,14 +70,7 @@ function install_git {
   ./configure --prefix=$HOME/picnic-tools --with-curl=$HOME/picnic-tools/ --with-expat=$HOME/picnic-tools  >> ~/picnic-tmp/install.log &&
   make  >> ~/picnic-tmp/install.log &&
   make install  >> ~/picnic-tmp/install.log
-  case "$?" in
-    0)
-    success "installed git to $HOME/picnic-tools"
-    ;;
-    1)
-    error "failed install git, see ~/picnic-tmp/install.log to more info"
-    ;;
-  esac
+  show_result $? "git"
 }
 
 function install_curl {
@@ -91,14 +88,7 @@ function install_curl {
   ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
   make >> ~/picnic-tmp/install.log &&
   make install >> ~/picnic-tmp/install.log
-  case "$?" in
-    0)
-    success "installed curl to $HOME/picnic-tools"
-    ;;
-    1)
-    error "failed install curl, see ~/picnic-tmp/install.log to more info"
-    ;;
-  esac
+  show_result $? "curl"
 }
 
 function install_ssl {
@@ -108,14 +98,7 @@ function install_ssl {
   ./config --prefix=$HOME/picnic-tools shared zlib-dynamic >> ~/picnic-tmp/install.log &&
   make >> ~/picnic-tmp/install.log &&
   make install >> ~/picnic-tmp/install.log
-  case "$?" in
-    0)
-    success "installed openssl to $HOME/picnic-tools"
-    ;;
-    1)
-    error "failed install openssl, see ~/picnic-tmp/install.log to more info"
-    ;;
-  esac
+  show_result $? "ssl"
 }
 
 function install_expat {
@@ -125,14 +108,7 @@ function install_expat {
   ./configure --prefix=$HOME/picnic-tools --disable-static >> ~/picnic-tmp/install.log &&
   make >> ~/picnic-tmp/install.log &&
   make install >> ~/picnic-tmp/install.log
-  case "$?" in
-    0)
-      success "installed expat to $HOME/picnic-tools"
-    ;;
-    1)
-      error "failed install expat, see ~/picnic-tmp/install.log to more info"
-    ;;
-  esac
+  show_result $? "expat"
 }
 
 # SUBCOMMANDS
