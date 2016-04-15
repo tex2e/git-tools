@@ -35,8 +35,8 @@ function check_available {
 function package_download {
   cd ~/picnic-tmp
   wget "http://zlib.net/zlib-1.2.8.tar.gz"
-  wget -O expat-2.1.1.tar.bz2 "https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
-  wget "http://downloads.sourceforge.net/project/expat/expat/2.1.1/expat-2.1.1.tar.bz2?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fexpat%2F&ts=1460701353&use_mirror=ufpr"
+  wget "https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
+  wget -O expat-2.1.1.tar.bz2 "http://downloads.sourceforge.net/project/expat/expat/2.1.1/expat-2.1.1.tar.bz2?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fexpat%2F&ts=1460701353&use_mirror=ufpr"
   wget "https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
   wget "http://www.execve.net/curl/curl-7.48.0.tar.gz"
 }
@@ -158,11 +158,11 @@ function picnic-remove {
 function picnic-update {
   dir="$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)"
   me=$dir/"$(basename $0)"
-  mv $me $dir/picnic.old
+  mv $me $dir/picnic-old
   wget -O $me "https://raw.githubusercontent.com/nobuyo/picnic/master/picnic"
   if [ $? -ne 0 ]; then
     error "pinic Could not found, reverting"
-    mv $dir/pinic.old $me
+    mv $dir/pinic-old $me
     exit 1
   fi
   chmod +x $me
