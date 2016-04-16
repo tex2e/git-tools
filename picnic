@@ -58,6 +58,7 @@ package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz"
 
 function package_download {
   cd "$WORK_SPACE"
+  # ordered by file size
   download "$package_curl" &
   download "$package_git" &
   download "$package_openssl" &
@@ -72,6 +73,7 @@ function download {
 }
 
 function install_zlib {
+  local result=1
   local tar_package="$(basename $package_zlib)"
   local package="${tar_package%.tar.gz}"
   cd "$WORK_SPACE"
@@ -83,12 +85,14 @@ function install_zlib {
     ./configure --prefix="$INSTALL_DIR" &&
     make &&
     make install
+    result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result $? "zlib"
+  show_result "$result" "zlib"
 }
 
 function install_git {
+  local result=1
   local tar_package="$(basename $package_git)"
   local package="${tar_package%.tar.gz}"
   cd "$WORK_SPACE"
@@ -100,12 +104,14 @@ function install_git {
     ./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR" &&
     make CURLDIR="$INSTALL_DIR" &&
     make install
+    result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result $? "git"
+  show_result "$result" "git"
 }
 
 function install_curl {
+  local result=1
   local tar_package="$(basename $package_curl)"
   local package="${tar_package%.tar.gz}"
   cd "$WORK_SPACE"
@@ -117,12 +123,14 @@ function install_curl {
     ./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR" &&
     make &&
     make install
+    result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result $? "curl"
+  show_result "$result" "curl"
 }
 
 function install_openssl {
+  local result=1
   local tar_package="$(basename $package_openssl)"
   local package="${tar_package%.tar.gz}"
   cd "$WORK_SPACE"
@@ -134,12 +142,14 @@ function install_openssl {
     ./config --prefix="$INSTALL_DIR" shared zlib-dynamic &&
     make &&
     make install
+    result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result $? "openssl"
+  show_result "$result" "openssl"
 }
 
 function install_expat {
+  local result=1
   local tar_package="$(basename $package_expat)"
   local package="${tar_package%.tar.gz}"
   cd "$WORK_SPACE"
@@ -151,9 +161,10 @@ function install_expat {
     ./configure --prefix="$INSTALL_DIR" --disable-static &&
     make &&
     make install
+    result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result $? "expat"
+  show_result "$result" "expat"
 }
 
 # SUBCOMMANDS
