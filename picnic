@@ -58,21 +58,16 @@ package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz"
 
 function package_download {
   cd "$WORK_SPACE"
-  download "$package_zlib" &
-  download "$package_git" &
-  download "$package_expat" &
-  download "$package_openssl" &
   download "$package_curl" &
+  download "$package_git" &
+  download "$package_openssl" &
+  download "$package_zlib" &
+  download "$package_expat" &
   wait
-  # wget "http://zlib.net/zlib-1.2.8.tar.gz"
-  # wget "https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
-  # wget -O expat-2.1.0.tar.gz "http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
-  # wget "https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
-  # wget "http://www.execve.net/curl/curl-7.48.0.tar.gz"
 }
 
 function download {
-  wget $1 &>/dev/null &&
+  wget "$1" &>/dev/null &&
   success "download source file: $(basename -- $1)"
 }
 
@@ -141,7 +136,7 @@ function install_openssl {
     make install
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result $? "ssl"
+  show_result $? "openssl"
 }
 
 function install_expat {
@@ -163,6 +158,7 @@ function install_expat {
 
 # SUBCOMMANDS
 
+# download source file only
 function picnic-getpack {
   check_os
   mkdir "$WORK_SPACE"
@@ -170,7 +166,9 @@ function picnic-getpack {
   success "source file downloaded."
 }
 
-# Dependencies tree
+# download and install packages
+#
+# dependencies tree
 #
 #   git
 #   ├── curl
@@ -178,7 +176,6 @@ function picnic-getpack {
 #   │       └── zlib
 #   └── expat
 #
-
 function picnic-unpack {
   check_os
   mkdir -p "$INSTALL_DIR"
@@ -194,13 +191,15 @@ function picnic-unpack {
   # echo "PATH=$PATH:$INSTALL_DIR/bin" >> "$HOME/.$(basename $SHELL)rc"
 }
 
+# reinstall packages
 function picnic-reunpack {
   picnic-remove
   picnic-unpack
 }
 
+# remove packages
 function picnic-remove {
-  if [ -d "$INSTALL_DIR" ];then
+  if [ -d "$INSTALL_DIR" ]; then
     rm -rf "$INSTALL_DIR"
   fi
 }
@@ -212,7 +211,7 @@ function picnic-test {
   exit 0
 }
 
-# for dev
+# update self
 function picnic-update {
   dir="$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)"
   me="$dir/$(basename $0)"
