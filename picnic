@@ -1,11 +1,11 @@
 #!/bin/bash
+#
+# picnic - deploy git without sudo/root
+#
 
 INSTALL_DIR=${INSTALL_DIR:-"$HOME/picnic-tools"}
 WORK_SPACE=${WORK_SPACE:-"/tmp/picnic"}
 LOGFILE="$WORK_SPACE/install.log"
-
-mkdir -p "$INSTALL_DIR"
-mkdir -p "$WORK_SPACE"
 
 function warn {
   # color:yellow
@@ -184,15 +184,12 @@ function picnic-unpack {
   mkdir -p "$INSTALL_DIR"
   mkdir -p "$WORK_SPACE"
   package_download
-  exit
   export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib"
   echo "picnic unpack $(date)" > "$LOGFILE"
-  install_openssl
-  install_expat
   install_zlib
-  # install_openssl
+  install_openssl
   install_curl
-  wait
+  install_expat
   install_git
   # echo "PATH=$PATH:$INSTALL_DIR/bin" >> "$HOME/.$(basename $SHELL)rc"
 }
