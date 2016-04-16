@@ -1,5 +1,12 @@
 #!/bin/bash
 
+INSTALL_DIR=${INSTALL_DIR:-"$HOME/picnic-tools"}
+WORK_SPACE=${WORK_SPACE:-"/tmp/picnic"}
+LOGFILE="$WORK_SPACE/install.log"
+
+mkdir -p "$INSTALL_DIR"
+mkdir -p "$WORK_SPACE"
+
 function warn {
   # color:yellow
   echo -e "\033[33mWarning\033[m" "$*"
@@ -17,24 +24,24 @@ function success {
 
 function show_result {
   case "$1" in
-    0)
-      success "installed $2 to $HOME/picnic-tools"
-      ;;
-    *)
-      error "failed install $2 ith $1, see ~/picnic-tmp/install.log to more info"
-      ;;
+  0 )
+    success "installed $2 to $INSTALL_DIR"
+    ;;
+  * )
+    error "failed install $2 ith $1, see $LOGFILE to more info"
+    ;;
   esac
 }
 
 function check_os {
   case ${OSTYPE} in
-    linux*)
-      success "The system is $OSTYPE, ready to deploy"
-      ;;
-    *)
-      error "$OSTYPE is NOT supported, exitting"
-      exit 1
-      ;;
+  linux* )
+    success "The system is $OSTYPE, ready to deploy"
+    ;;
+  * )
+    error "$OSTYPE is NOT supported, exitting"
+    exit 1
+    ;;
   esac
 }
 
@@ -44,7 +51,7 @@ function check_available {
 }
 
 function package_download {
-  cd ~/picnic-tmp
+  cd "$WORK_SPACE"
   wget "http://zlib.net/zlib-1.2.8.tar.gz"
   wget "https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
   wget -O expat-2.1.0.tar.gz "http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
@@ -53,58 +60,73 @@ function package_download {
 }
 
 function install_zlib {
-  cd ~/picnic-tmp
-  echo "=========INSTALLING ZLIB=========" >> ~/picnic-tmp/install.log 
-  tar zxf zlib-1.2.8.tar.gz >> ~/picnic-tmp/install.log &&
-  cd zlib-1.2.8 &&
-  ./configure --prefix=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
-  make >> ~/picnic-tmp/install.log &&
-  make install >> ~/picnic-tmp/install.log
+  cd "$WORK_SPACE"
+  {
+    echo "=========INSTALLING ZLIB========="
+    tar zxf zlib-1.2.8.tar.gz &&
+    cd zlib-1.2.8 &&
+    ./configure --prefix="$INSTALL_DIR" &&
+    make &&
+    make install
+  } > "$WORK_SPACE/tmp.$$"
+  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE" 2>&1
   show_result $? "zlib"
 }
 
 
 function install_git {
-  cd ~/picnic-tmp
-  echo "=========INSTALLING GIT=========" >> ~/picnic-tmp/install.log 
-  tar zxf git-2.8.1.tar.gz >> ~/picnic-tmp/install.log &&
-  cd git-2.8.1 &&
-  ./configure --prefix=$HOME/picnic-tools --with-expat=$HOME/picnic-tools --with-curl=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
-  make CURLDIR=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
-  make install  >> ~/picnic-tmp/install.log
+  cd "$WORK_SPACE"
+  {
+    echo "=========INSTALLING GIT========="
+    tar zxf git-2.8.1.tar.gz &&
+    cd git-2.8.1 &&
+    ./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR" &&
+    make CURLDIR=$HOME/picnic-tools &&
+    make install
+  } > "$WORK_SPACE/tmp.$$"
+  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE" 2>&1
   show_result $? "git"
 }
 
 function install_curl {
-  cd ~/picnic-tmp
-  echo "=========INSTALLING CURL=========" >> ~/picnic-tmp/install.log 
-  tar zxf curl-7.48.0.tar.gz >> ~/picnic-tmp/install.log &&
-  cd curl-7.48.0 &&
-  ./configure --with-ssl=$HOME/picnic-tools --prefix=$HOME/picnic-tools >> ~/picnic-tmp/install.log &&
-  make >> ~/picnic-tmp/install.log &&
-  make install >> ~/picnic-tmp/install.log
+  cd "$WORK_SPACE"
+  {
+    echo "=========INSTALLING CURL========="
+    tar zxf curl-7.48.0.tar.gz &&
+    cd curl-7.48.0 &&
+    ./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR" &&
+    make &&
+    make install
+  } > "$WORK_SPACE/tmp.$$"
+  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE" 2>&1
   show_result $? "curl"
 }
 
 function install_ssl {
-  cd ~/picnic-tmp
-  echo "=========INSTALLING SSL=========" >> ~/picnic-tmp/install.log 
-  tar zxf openssl-1.0.2g.tar.gz >> ~/picnic-tmp/install.log &&
-  cd openssl-1.0.2g &&
-  ./config --prefix=$HOME/picnic-tools shared zlib-dynamic >> ~/picnic-tmp/install.log &&
-  make >> ~/picnic-tmp/install.log &&
-  make install >> ~/picnic-tmp/install.log
+  cd "$WORK_SPACE"
+  {
+    echo "=========INSTALLING SSL========="
+    tar zxf openssl-1.0.2g.tar.gz &&
+    cd openssl-1.0.2g &&
+    ./config --prefix="$INSTALL_DIR" shared zlib-dynamic &&
+    make &&
+    make install
+  } > "$WORK_SPACE/tmp.$$"
+  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE" 2>&1
   show_result $? "ssl"
 }
 
 function install_expat {
-  cd ~/picnic-tmp
-  echo "=========INSTALLING EXPAT=========" >> ~/picnic-tmp/install.log 
-  tar zxf expat-2.1.0.tar.gz >> ~/picnic-tmp/install.log &&
-  cd expat-2.1.0 &&
-  ./configure --prefix=$HOME/picnic-tools --disable-static >> ~/picnic-tmp/install.log &&
-  make >> ~/picnic-tmp/install.log &&
-  make install >> ~/picnic-tmp/install.log
+  cd "$WORK_SPACE"
+  {
+    echo "=========INSTALLING EXPAT========="
+    tar zxf expat-2.1.0.tar.gz &&
+    cd expat-2.1.0 &&
+    ./configure --prefix="$INSTALL_DIR" --disable-static &&
+    make &&
+    make install
+  } > "$WORK_SPACE/tmp.$$"
+  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE" 2>&1
   show_result $? "expat"
 }
 
@@ -112,70 +134,66 @@ function install_expat {
 
 function picnic-getpack {
   check_os
-  mkdir ~/picnic-tmp
+  mkdir "$WORK_SPACE"
   package_download
   success "source file downloaded."
 }
 
+# Dependencies tree
+#
+#   git
+#   ├── curl
+#   │   └── ssl
+#   │       └── zlib
+#   └── expat
+#
+
 function picnic-unpack {
   check_os
-  mkdir ~/picnic-tmp
-  mkdir ~/picnic-tools
+  mkdir -p "$INSTALL_DIR"
+  mkdir -p "$WORK_SPACE"
   package_download
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib" LD_LIBRARY_PATH="$HOME/picnic-tools/lib/"
-  echo "picnic unpack $(date)" > ~/picnic-tmp/install.log
+  export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib/"
+  echo "picnic unpack $(date)" > "$LOGFILE"
+  install_expat &
   install_zlib
   install_ssl
   install_curl
-  install_expat
+  wait
   install_git
   # echo "PATH=$PATH:~/picnic/bin" >> "~/.$(basename $SHELL)rc"
 }
 
 function picnic-reunpack {
-  check_os
-  if [ ! -e picnic-tmp/ ]; then
-    echo "packages not found in local, try 'picnic unpack'"
-    exit 1
+  picnic-remove
+  picnic-unpack
+}
+
+function picnic-remove {
+  if [ -e "$INSTALL_DIR" ];then
+    rm -rf "$INSTALL_DIR"
   fi
-  if [ -e picnic-tools ];then
-    rm -rf picnic-tools/
-  fi
-  mkdir ~/picnic-tools
-  export CPPFLAGS="-I$HOME/picnic-tools/include" LDFLAGS="-L$HOME/picnic-tools/lib"
-  echo "picnic reunpack $(date)" > ~/picnic-tmp/install.log
-  install_zlib
-  install_ssl
-  install_curl
-  install_expat
-  install_git
 }
 
 function picnic-test {
-  cd ~/picnic-tools/bin
+  cd "$INSTALL_DIR/bin"
   ./git clone https://github.com/nobuyo/picnic.git || exit 1
   success "Git installed successfully"
   exit 0
 }
 
-function picnic-remove {
-  if [ -e ~/picnic-tools ]; then
-    rm -rf ~/picnic-*
-  fi
-}
-
 # for dev
 function picnic-update {
   dir="$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)"
-  me=$dir/"$(basename $0)"
-  mv $me $dir/picnic-old
-  wget -O $me "https://raw.githubusercontent.com/nobuyo/picnic/master/picnic"
+  me="$dir/$(basename $0)"
+  mv "$me" "$dir/picnic-old"
+  wget -O "$me" "https://raw.githubusercontent.com/nobuyo/picnic/master/picnic"
   if [ $? -ne 0 ]; then
     error "pinic Could not found, reverting"
-    mv $dir/pinic-old $me
+    mv "$dir/pinic-old" "$me"
     exit 1
   fi
-  chmod +x $me
+  chmod +x "$me"
   success "Updated picnic"
 }
 
@@ -192,19 +210,17 @@ ARGS=()
 while [ $# -gt 0 ]
 do
   case "$1" in
-
-    --help|--version|-V)
-      picnic-help
-      exit 0
+  --help | --version | -V )
+    picnic-help
+    exit 0
     ;;
-
-    *)
-      if [ -z "$SUBCOMMAND" ]; then
-        SUBCOMMAND="$1"
-      else
-        ARGS+=( "$1" )
-      fi
-      shift
+  * )
+    if [ -z "$SUBCOMMAND" ]; then
+      SUBCOMMAND="$1"
+    else
+      ARGS+=( "$1" )
+    fi
+    shift
     ;;
   esac
 done
