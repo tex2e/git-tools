@@ -52,32 +52,34 @@ function check_available {
 
 package_zlib="http://zlib.net/zlib-1.2.8.tar.gz"
 package_git="https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
-package_expat="https://launchpad.net/ubuntu/+archive/primary/+files/expat_2.1.0.orig.tar.gz"
+package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
 package_openssl="https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
 package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz"
 
 function package_download {
   cd "$WORK_SPACE"
   # ordered by file size
-  download "$package_curl" &
-  download "$package_git" &
-  download "$package_openssl" &
-  download "$package_zlib" &
-  download "$package_expat" &
+  download "curl" &
+  download "git" &
+  download "openssl" &
+  download "zlib" &
+  download "expat" &
   wait
 }
 
 function download {
-  wget "$1" &>/dev/null &&
-  success "download source file: $(basename -- $1)"
+  local package=$1
+  local package_url=$(eval echo '$package_'$1)
+  wget -O "$package.tar.gz" "$package_url" &>/dev/null &&
+  success "download source file: $(basename -- $package)"
 }
 
 function install_zlib {
   local result=1
-  local tar_package="$(basename $package_zlib)"
-  local package="${tar_package%.tar.gz}"
+  local package="zlib"
+  local tar_package="$package.tar.gz"
   cd "$WORK_SPACE"
-  echo "installing zlib..."
+  echo "installing $package..."
   {
     echo "=========INSTALLING ZLIB=========" &&
     tar zxf "$tar_package" &&
@@ -88,15 +90,15 @@ function install_zlib {
     result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "zlib"
+  show_result "$result" "$package"
 }
 
 function install_git {
   local result=1
-  local tar_package="$(basename $package_git)"
-  local package="${tar_package%.tar.gz}"
+  local package="git"
+  local tar_package="$package.tar.gz"
   cd "$WORK_SPACE"
-  echo "installing git..."
+  echo "installing $package..."
   {
     echo "=========INSTALLING GIT=========" &&
     tar zxf "$tar_package" &&
@@ -107,15 +109,15 @@ function install_git {
     result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "git"
+  show_result "$result" "$package"
 }
 
 function install_curl {
   local result=1
-  local tar_package="$(basename $package_curl)"
-  local package="${tar_package%.tar.gz}"
+  local package="curl"
+  local tar_package="$package.tar.gz"
   cd "$WORK_SPACE"
-  echo "installing curl..."
+  echo "installing $package..."
   {
     echo "=========INSTALLING CURL=========" &&
     tar zxf "$tar_package" &&
@@ -126,15 +128,15 @@ function install_curl {
     result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "curl"
+  show_result "$result" "$package"
 }
 
 function install_openssl {
   local result=1
-  local tar_package="$(basename $package_openssl)"
-  local package="${tar_package%.tar.gz}"
+  local package="openssl"
+  local tar_package="$package.tar.gz"
   cd "$WORK_SPACE"
-  echo "installing openssl..."
+  echo "installing $package..."
   {
     echo "=========INSTALLING SSL=========" &&
     tar zxf "$tar_package" &&
@@ -145,15 +147,15 @@ function install_openssl {
     result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "openssl"
+  show_result "$result" "$package"
 }
 
 function install_expat {
   local result=1
-  local tar_package="$(basename $package_expat)"
-  local package="${tar_package%.tar.gz}"
+  local package="expat"
+  local tar_package="$package.tar.gz"
   cd "$WORK_SPACE"
-  echo "installing expat..."
+  echo "installing $package..."
   {
     echo "=========INSTALLING EXPAT=========" &&
     tar zxf "$tar_package" &&
@@ -164,7 +166,7 @@ function install_expat {
     result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "expat"
+  show_result "$result" "$package"
 }
 
 # SUBCOMMANDS
