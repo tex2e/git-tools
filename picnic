@@ -172,7 +172,7 @@ function install_expat {
 # download source file only
 function picnic-getpack {
   check_os
-  mkdir "$WORK_SPACE"
+  mkdir -p "$WORK_SPACE"
   package_download
   success "source file downloaded."
 }
@@ -215,30 +215,8 @@ function picnic-remove {
   fi
 }
 
-function picnic-test {
-  cd "$INSTALL_DIR/bin"
-  ./git clone https://github.com/nobuyo/picnic.git || exit 1
-  success "Git installed successfully"
-  exit 0
-}
-
-# update self
-function picnic-update {
-  dir="$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)"
-  me="$dir/$(basename $0)"
-  mv "$me" "$dir/picnic-old"
-  wget -O "$me" "https://raw.githubusercontent.com/nobuyo/picnic/master/picnic"
-  if [ $? -ne 0 ]; then
-    error "pinic Could not found, reverting"
-    mv "$dir/pinic-old" "$me"
-    exit 1
-  fi
-  chmod +x "$me"
-  success "Updated picnic"
-}
-
 function picnic-help {
-  echo "picnic-0.1.0"
+  echo "picnic-1.1.0"
   echo "  unpack: install from source"
   echo "  remove: remove files"
 }
