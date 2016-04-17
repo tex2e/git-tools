@@ -22,6 +22,7 @@ function success {
   echo -e "\033[32mSuccess\033[m" "$*"
 }
 
+# show_result <status> <package>
 function show_result {
   case "$1" in
   0 ) success "installed $2 to $INSTALL_DIR" ;;
@@ -41,12 +42,14 @@ function check_os {
   esac
 }
 
-package_zlib="http://zlib.net/zlib-1.2.8.tar.gz"
-package_git="https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
-package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
-package_openssl="https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
+# <package> := curl | expat | git | openssl | zlib
 package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz"
+package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
+package_git="https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
+package_openssl="https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
+package_zlib="http://zlib.net/zlib-1.2.8.tar.gz"
 
+# download <package>
 function download {
   local package=$1
   local package_url=$(eval echo '$package_'$1)
@@ -65,6 +68,7 @@ function download_package {
   wait
 }
 
+# install <package>
 function install {
   local result=1
   local package="$1"
@@ -144,9 +148,8 @@ function picnic-reunpack {
 
 # remove packages
 function picnic-remove {
-  if [ -d "$INSTALL_DIR" ]; then
-    rm -rf "$INSTALL_DIR"
-  fi
+  test -d "$INSTALL_DIR" && rm -rf "$INSTALL_DIR"
+  test -d "$WORK_SPACE"  && rm -rf "$WORK_SPACE"
 }
 
 # show version and help
