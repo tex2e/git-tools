@@ -4,6 +4,9 @@ picnic deploys Git without root permission.
 It downloads source code and compile them. finally, install them in `~/picnic-tools`.
 Note: this is tested only **Ubuntu** terminal.
 
+Git requires 4 packages, curl, expat, openssl and zlib.
+First, picnic installs these 4 packages. Next, installs Git.
+So these 4 packages can be also used in the terminal.
 
 ## Getting Started
 
