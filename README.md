@@ -1,7 +1,8 @@
 # picnic(1) -- deploy git without sudo/root
 
-picnic deploys git without root permission.
-It downloads **Ubuntu packages** and install them in `~/picnic-tools`
+picnic deploys Git without root permission.
+It downloads source code and compile them. finally, install them in `~/picnic-tools`.
+Note: this is tested only **Ubuntu** terminal.
 
 
 ## Getting Started
