@@ -82,7 +82,8 @@ function install_zlib {
   echo "installing $package..."
   {
     echo "=========INSTALLING ZLIB=========" &&
-    tar zxf "$tar_package" &&
+    mkdir "$package" &&
+    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
     ./configure --prefix="$INSTALL_DIR" &&
     make &&
@@ -101,7 +102,8 @@ function install_git {
   echo "installing $package..."
   {
     echo "=========INSTALLING GIT=========" &&
-    tar zxf "$tar_package" &&
+    mkdir "$package" &&
+    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
     ./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR" &&
     make CURLDIR="$INSTALL_DIR" &&
@@ -120,7 +122,8 @@ function install_curl {
   echo "installing $package..."
   {
     echo "=========INSTALLING CURL=========" &&
-    tar zxf "$tar_package" &&
+    mkdir "$package" &&
+    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
     ./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR" &&
     make &&
@@ -139,7 +142,8 @@ function install_openssl {
   echo "installing $package..."
   {
     echo "=========INSTALLING SSL=========" &&
-    tar zxf "$tar_package" &&
+    mkdir "$package" &&
+    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
     ./config --prefix="$INSTALL_DIR" shared zlib-dynamic &&
     make &&
@@ -158,7 +162,8 @@ function install_expat {
   echo "installing $package..."
   {
     echo "=========INSTALLING EXPAT=========" &&
-    tar zxf "$tar_package" &&
+    mkdir "$package" &&
+    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
     ./configure --prefix="$INSTALL_DIR" --disable-static &&
     make &&
