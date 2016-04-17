@@ -24,17 +24,13 @@ function success {
 
 function show_result {
   case "$1" in
-  0 )
-    success "installed $2 to $INSTALL_DIR"
-    ;;
-  * )
-    error "failed install $2 ith $1, see $LOGFILE to more info"
-    ;;
+  0 ) success "installed $2 to $INSTALL_DIR" ;;
+  * ) error   "failed install $2, see $LOGFILE to more info" ;;
   esac
 }
 
 function check_os {
-  case ${OSTYPE} in
+  case "$OSTYPE" in
   linux* )
     success "The system is $OSTYPE, ready to deploy"
     ;;
@@ -45,10 +41,10 @@ function check_os {
   esac
 }
 
-function check_available {
-  which "$1" &>/dev/null
-  return $?
-}
+# function check_available {
+#   which "$1" &>/dev/null
+#   return $?
+# }
 
 package_zlib="http://zlib.net/zlib-1.2.8.tar.gz"
 package_git="https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
@@ -74,19 +70,19 @@ function download {
   success "download source file: $(basename -- $package)"
 }
 
-function install_zlib {
+function install {
   local result=1
-  local package="zlib"
+  local package="$1"
   local tar_package="$package.tar.gz"
   cd "$WORK_SPACE"
   echo "installing $package..."
   {
-    echo "=========INSTALLING ZLIB=========" &&
+    echo "=========INSTALLING $package=========" &&
     mkdir "$package" &&
     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
-    ./configure --prefix="$INSTALL_DIR" &&
-    make &&
+    ${CONFIGURE:-./configure} &&
+    ${MAKE:-make} &&
     make install
     result=$?
   } > "$WORK_SPACE/tmp.$$" 2>&1
@@ -94,85 +90,105 @@ function install_zlib {
   show_result "$result" "$package"
 }
 
-function install_git {
-  local result=1
-  local package="git"
-  local tar_package="$package.tar.gz"
-  cd "$WORK_SPACE"
-  echo "installing $package..."
-  {
-    echo "=========INSTALLING GIT=========" &&
-    mkdir "$package" &&
-    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-    cd "$package" &&
-    ./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR" &&
-    make CURLDIR="$INSTALL_DIR" &&
-    make install
-    result=$?
-  } > "$WORK_SPACE/tmp.$$" 2>&1
-  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "$package"
-}
-
-function install_curl {
-  local result=1
-  local package="curl"
-  local tar_package="$package.tar.gz"
-  cd "$WORK_SPACE"
-  echo "installing $package..."
-  {
-    echo "=========INSTALLING CURL=========" &&
-    mkdir "$package" &&
-    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-    cd "$package" &&
-    ./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR" &&
-    make &&
-    make install
-    result=$?
-  } > "$WORK_SPACE/tmp.$$" 2>&1
-  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "$package"
-}
-
-function install_openssl {
-  local result=1
-  local package="openssl"
-  local tar_package="$package.tar.gz"
-  cd "$WORK_SPACE"
-  echo "installing $package..."
-  {
-    echo "=========INSTALLING SSL=========" &&
-    mkdir "$package" &&
-    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-    cd "$package" &&
-    ./config --prefix="$INSTALL_DIR" shared zlib-dynamic &&
-    make &&
-    make install
-    result=$?
-  } > "$WORK_SPACE/tmp.$$" 2>&1
-  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "$package"
-}
-
-function install_expat {
-  local result=1
-  local package="expat"
-  local tar_package="$package.tar.gz"
-  cd "$WORK_SPACE"
-  echo "installing $package..."
-  {
-    echo "=========INSTALLING EXPAT=========" &&
-    mkdir "$package" &&
-    tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-    cd "$package" &&
-    ./configure --prefix="$INSTALL_DIR" --disable-static &&
-    make &&
-    make install
-    result=$?
-  } > "$WORK_SPACE/tmp.$$" 2>&1
-  cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-  show_result "$result" "$package"
-}
+# function install_zlib {
+#   local result=1
+#   local package="zlib"
+#   local tar_package="$package.tar.gz"
+#   cd "$WORK_SPACE"
+#   echo "installing $package..."
+#   {
+#     echo "=========INSTALLING $package=========" &&
+#     mkdir "$package" &&
+#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
+#     cd "$package" &&
+#     ./configure --prefix="$INSTALL_DIR" &&
+#     make &&
+#     make install
+#     result=$?
+#   } > "$WORK_SPACE/tmp.$$" 2>&1
+#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
+#   show_result "$result" "$package"
+# }
+#
+# function install_git {
+#   local result=1
+#   local package="git"
+#   local tar_package="$package.tar.gz"
+#   cd "$WORK_SPACE"
+#   echo "installing $package..."
+#   {
+#     echo "=========INSTALLING $package=========" &&
+#     mkdir "$package" &&
+#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
+#     cd "$package" &&
+#     ./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR" &&
+#     make CURLDIR="$INSTALL_DIR" &&
+#     make install
+#     result=$?
+#   } > "$WORK_SPACE/tmp.$$" 2>&1
+#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
+#   show_result "$result" "$package"
+# }
+#
+# function install_curl {
+#   local result=1
+#   local package="curl"
+#   local tar_package="$package.tar.gz"
+#   cd "$WORK_SPACE"
+#   echo "installing $package..."
+#   {
+#     echo "=========INSTALLING $package=========" &&
+#     mkdir "$package" &&
+#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
+#     cd "$package" &&
+#     ./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR" &&
+#     make &&
+#     make install
+#     result=$?
+#   } > "$WORK_SPACE/tmp.$$" 2>&1
+#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
+#   show_result "$result" "$package"
+# }
+#
+# function install_openssl {
+#   local result=1
+#   local package="openssl"
+#   local tar_package="$package.tar.gz"
+#   cd "$WORK_SPACE"
+#   echo "installing $package..."
+#   {
+#     echo "=========INSTALLING $package=========" &&
+#     mkdir "$package" &&
+#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
+#     cd "$package" &&
+#     ./config --prefix="$INSTALL_DIR" shared zlib-dynamic &&
+#     make &&
+#     make install
+#     result=$?
+#   } > "$WORK_SPACE/tmp.$$" 2>&1
+#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
+#   show_result "$result" "$package"
+# }
+#
+# function install_expat {
+#   local result=1
+#   local package="expat"
+#   local tar_package="$package.tar.gz"
+#   cd "$WORK_SPACE"
+#   echo "installing $package..."
+#   {
+#     echo "=========INSTALLING $package=========" &&
+#     mkdir "$package" &&
+#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
+#     cd "$package" &&
+#     ./configure --prefix="$INSTALL_DIR" --disable-static &&
+#     make &&
+#     make install
+#     result=$?
+#   } > "$WORK_SPACE/tmp.$$" 2>&1
+#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
+#   show_result "$result" "$package"
+# }
 
 # SUBCOMMANDS
 
@@ -201,11 +217,25 @@ function picnic-unpack {
   package_download
   export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib"
   echo "picnic unpack $(date)" > "$LOGFILE"
-  install_zlib
-  install_openssl
-  install_curl
-  install_expat
-  install_git
+
+  CONFIGURE='./configure --prefix="$INSTALL_DIR"' \
+    install "zlib"
+  CONFIGURE='./config --prefix="$INSTALL_DIR" shared zlib-dynamic' \
+    install "openssl"
+  CONFIGURE='./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR"' \
+    install "curl"
+  CONFIGURE='./configure --prefix="$INSTALL_DIR" --disable-static' \
+    install "expat"
+  CONFIGURE='./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR"' \
+  MAKE='make CURLDIR="$INSTALL_DIR"' \
+    install "git"
+
+  # install_zlib
+  # install_openssl
+  # install_curl
+  # install_expat
+  # install_git
+
   # echo "PATH=$PATH:$INSTALL_DIR/bin" >> "$HOME/.$(basename $SHELL)rc"
 }
 
