@@ -41,18 +41,20 @@ function check_os {
   esac
 }
 
-# function check_available {
-#   which "$1" &>/dev/null
-#   return $?
-# }
-
 package_zlib="http://zlib.net/zlib-1.2.8.tar.gz"
 package_git="https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
 package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
 package_openssl="https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
 package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz"
 
-function package_download {
+function download {
+  local package=$1
+  local package_url=$(eval echo '$package_'$1)
+  wget -O "$package.tar.gz" "$package_url" &>/dev/null &&
+  success "download source file: $package.tar.gz"
+}
+
+function download_package {
   cd "$WORK_SPACE"
   # ordered by file size
   download "curl" &
@@ -63,13 +65,6 @@ function package_download {
   wait
 }
 
-function download {
-  local package=$1
-  local package_url=$(eval echo '$package_'$1)
-  wget -O "$package.tar.gz" "$package_url" &>/dev/null &&
-  success "download source file: $(basename -- $package)"
-}
-
 function install {
   local result=1
   local package="$1"
@@ -78,7 +73,7 @@ function install {
   echo "installing $package..."
   {
     echo "=========INSTALLING $package=========" &&
-    mkdir "$package" &&
+    mkdir -p "$package" &&
     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
     ${CONFIGURE:-./configure} &&
@@ -90,118 +85,6 @@ function install {
   show_result "$result" "$package"
 }
 
-# function install_zlib {
-#   local result=1
-#   local package="zlib"
-#   local tar_package="$package.tar.gz"
-#   cd "$WORK_SPACE"
-#   echo "installing $package..."
-#   {
-#     echo "=========INSTALLING $package=========" &&
-#     mkdir "$package" &&
-#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-#     cd "$package" &&
-#     ./configure --prefix="$INSTALL_DIR" &&
-#     make &&
-#     make install
-#     result=$?
-#   } > "$WORK_SPACE/tmp.$$" 2>&1
-#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-#   show_result "$result" "$package"
-# }
-#
-# function install_git {
-#   local result=1
-#   local package="git"
-#   local tar_package="$package.tar.gz"
-#   cd "$WORK_SPACE"
-#   echo "installing $package..."
-#   {
-#     echo "=========INSTALLING $package=========" &&
-#     mkdir "$package" &&
-#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-#     cd "$package" &&
-#     ./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR" &&
-#     make CURLDIR="$INSTALL_DIR" &&
-#     make install
-#     result=$?
-#   } > "$WORK_SPACE/tmp.$$" 2>&1
-#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-#   show_result "$result" "$package"
-# }
-#
-# function install_curl {
-#   local result=1
-#   local package="curl"
-#   local tar_package="$package.tar.gz"
-#   cd "$WORK_SPACE"
-#   echo "installing $package..."
-#   {
-#     echo "=========INSTALLING $package=========" &&
-#     mkdir "$package" &&
-#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-#     cd "$package" &&
-#     ./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR" &&
-#     make &&
-#     make install
-#     result=$?
-#   } > "$WORK_SPACE/tmp.$$" 2>&1
-#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-#   show_result "$result" "$package"
-# }
-#
-# function install_openssl {
-#   local result=1
-#   local package="openssl"
-#   local tar_package="$package.tar.gz"
-#   cd "$WORK_SPACE"
-#   echo "installing $package..."
-#   {
-#     echo "=========INSTALLING $package=========" &&
-#     mkdir "$package" &&
-#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-#     cd "$package" &&
-#     ./config --prefix="$INSTALL_DIR" shared zlib-dynamic &&
-#     make &&
-#     make install
-#     result=$?
-#   } > "$WORK_SPACE/tmp.$$" 2>&1
-#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-#   show_result "$result" "$package"
-# }
-#
-# function install_expat {
-#   local result=1
-#   local package="expat"
-#   local tar_package="$package.tar.gz"
-#   cd "$WORK_SPACE"
-#   echo "installing $package..."
-#   {
-#     echo "=========INSTALLING $package=========" &&
-#     mkdir "$package" &&
-#     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-#     cd "$package" &&
-#     ./configure --prefix="$INSTALL_DIR" --disable-static &&
-#     make &&
-#     make install
-#     result=$?
-#   } > "$WORK_SPACE/tmp.$$" 2>&1
-#   cat "$WORK_SPACE/tmp.$$" >> "$LOGFILE"
-#   show_result "$result" "$package"
-# }
-
-# SUBCOMMANDS
-
-# download source file only
-function picnic-getpack {
-  check_os
-  mkdir -p "$WORK_SPACE"
-  package_download
-  success "source file downloaded."
-}
-
-# download and install packages
-#
 # dependencies tree
 #
 #   git
@@ -210,33 +93,47 @@ function picnic-getpack {
 #   │       └── zlib
 #   └── expat
 #
+function install_package {
+  export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib"
+  echo "picnic unpack $(date)" > "$LOGFILE"
+
+  CONFIGURE="./configure --prefix=\"$INSTALL_DIR\"" \
+    install "zlib"
+  CONFIGURE="./config --prefix=\"$INSTALL_DIR\" shared zlib-dynamic" \
+    install "openssl"
+  CONFIGURE="./configure --with-ssl=\"$INSTALL_DIR\" --prefix=\"$INSTALL_DIR\"" \
+    install "curl"
+  CONFIGURE="./configure --prefix=\"$INSTALL_DIR\" --disable-static" \
+    install "expat"
+  CONFIGURE="./configure --prefix=\"$INSTALL_DIR\" --with-expat=\"$INSTALL_DIR\" --with-curl=\"$INSTALL_DIR\"" \
+  MAKE="make CURLDIR=\"$INSTALL_DIR\"" \
+    install "git"
+
+  echo "You will need to manually adapt your shell's environment"
+  echo "to work with picnic-tools."
+  echo "Add $INSTALL_DIR/bin to your PATH."
+  echo ""
+  echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
+  echo ""
+}
+
+# SUBCOMMANDS
+
+# download source file only
+function picnic-getpack {
+  check_os
+  mkdir -p "$WORK_SPACE"
+  download_package
+  success "source file downloaded."
+}
+
+# download and install packages
 function picnic-unpack {
   check_os
   mkdir -p "$INSTALL_DIR"
   mkdir -p "$WORK_SPACE"
-  package_download
-  export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib"
-  echo "picnic unpack $(date)" > "$LOGFILE"
-
-  CONFIGURE='./configure --prefix="$INSTALL_DIR"' \
-    install "zlib"
-  CONFIGURE='./config --prefix="$INSTALL_DIR" shared zlib-dynamic' \
-    install "openssl"
-  CONFIGURE='./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR"' \
-    install "curl"
-  CONFIGURE='./configure --prefix="$INSTALL_DIR" --disable-static' \
-    install "expat"
-  CONFIGURE='./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR"' \
-  MAKE='make CURLDIR="$INSTALL_DIR"' \
-    install "git"
-
-  # install_zlib
-  # install_openssl
-  # install_curl
-  # install_expat
-  # install_git
-
-  # echo "PATH=$PATH:$INSTALL_DIR/bin" >> "$HOME/.$(basename $SHELL)rc"
+  download_package
+  install_package
 }
 
 # reinstall packages
@@ -252,6 +149,7 @@ function picnic-remove {
   fi
 }
 
+# show version and help
 function picnic-help {
   echo "picnic-1.1.0"
   echo "  unpack: install from source"
