@@ -101,16 +101,16 @@ function install_package {
   export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib"
   echo "picnic unpack $(date)" > "$LOGFILE"
 
-  CONFIGURE="./configure --prefix=\"$INSTALL_DIR\"" \
+  CONFIGURE="./configure --prefix="$INSTALL_DIR"" \
     install "zlib"
-  CONFIGURE="./config --prefix=\"$INSTALL_DIR\" shared zlib-dynamic" \
+  CONFIGURE="./config --prefix="$INSTALL_DIR" shared zlib-dynamic" \
     install "openssl"
-  CONFIGURE="./configure --with-ssl=\"$INSTALL_DIR\" --prefix=\"$INSTALL_DIR\"" \
+  CONFIGURE="./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR"" \
     install "curl"
-  CONFIGURE="./configure --prefix=\"$INSTALL_DIR\" --disable-static" \
+  CONFIGURE="./configure --prefix="$INSTALL_DIR" --disable-static" \
     install "expat"
-  CONFIGURE="./configure --prefix=\"$INSTALL_DIR\" --with-expat=\"$INSTALL_DIR\" --with-curl=\"$INSTALL_DIR\"" \
-  MAKE="make CURLDIR=\"$INSTALL_DIR\"" \
+  CONFIGURE="./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR"" \
+  MAKE="make CURLDIR="$INSTALL_DIR"" \
     install "git"
 
   echo "You will need to manually adapt your shell's environment"
