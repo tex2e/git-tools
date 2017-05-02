@@ -1,3 +1,5 @@
+![circleci-shield](https://circleci.com/gh/tex2e/git-tools.svg?style=shield&circle-token=:circle-token)
+
 # git-tools(1) -- deploy git without sudo/root
 
 git-tools deploys Git without root permission.
