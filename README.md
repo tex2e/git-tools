@@ -1,37 +1,37 @@
-# picnic(1) -- deploy git without sudo/root
+# git-tools(1) -- deploy git without sudo/root
 
-picnic deploys Git without root permission.
-It downloads source code and compile them. finally, install them in `~/picnic-tools`.
+git-tools deploys Git without root permission.
+It downloads source code and compile them. finally, install them in `~/git-tools`.
 Note: this is tested only **Ubuntu** terminal.
 
 Git requires 4 packages, curl, expat, openssl and zlib.
-First, picnic installs these 4 packages. Next, installs Git.
+First, git-tools installs these 4 packages. Next, installs Git.
 So these 4 packages can be also used in the terminal.
 
 ## Getting Started
 
 Paste that at a Terminal prompt,
 
-    wget https://raw.githubusercontent.com/TeX2e/picnic/master/picnic
-    chmod +x picnic
-    ./picnic unpack
+    wget https://raw.githubusercontent.com/tex2e/git-tools/master/git-tools
+    chmod +x git-tools
+    ./git-tools unpack
 
 and export PATH to use git.
 
-    export PATH="$PATH:$HOME/picnic-tools/bin"
+    export PATH="$PATH:$HOME/git-tools/bin"
 
 
 ## SYNOPSIS
 
-    picnic <command>
+    git-tools <command>
 
 
 ## COMMANDS
 
 - `unpack`
-    * deploy git in `~/picnic-tools`
+    * deploy git in `~/git-tools`
 - `remove`
-    * remove all installed packages via picnic
+    * remove all installed packages via git-tools
 
 
 ## License
