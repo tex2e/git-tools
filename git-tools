@@ -51,7 +51,7 @@ function check_os {
 
 # <package> := curl | expat | git | openssl | zlib
 package_curl="https://curl.haxx.se/download/curl-7.54.0.tar.gz"
-package_expat="https://downloads.sourceforge.net/project/expat/expat/2.2.0/expat-2.2.0.tar.bz2?r=&ts=1493719539&use_mirror=jaist"
+package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
 package_git="https://github.com/git/git/archive/v2.12.2.tar.gz"
 package_openssl="https://github.com/openssl/openssl/archive/OpenSSL_1_1_0e.tar.gz"
 package_zlib="https://github.com/madler/zlib/archive/v1.2.11.tar.gz"
