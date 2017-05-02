@@ -161,6 +161,10 @@ function git-tools-help {
   echo "  remove: remove files"
 }
 
+function git-tools-test {
+  $INSTALL_DIR/bin/git --version
+}
+
 # ==============================================================================
 # MAIN
 

@@ -1,0 +1,5 @@
+test:
+  override:
+    - ./git-tools unpack
+  post:
+    - ./git-tools test
