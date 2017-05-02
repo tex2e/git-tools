@@ -50,7 +50,7 @@ function check_os {
 # package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
 
 # <package> := curl | expat | git | openssl | zlib
-package_curl="https://github.com/curl/curl/archive/curl-7_53_0.tar.gz"
+package_curl="https://curl.haxx.se/download/curl-7.54.0.tar.gz"
 package_expat="https://downloads.sourceforge.net/project/expat/expat/2.2.0/expat-2.2.0.tar.bz2?r=&ts=1493719539&use_mirror=jaist"
 package_git="https://github.com/git/git/archive/v2.12.2.tar.gz"
 package_openssl="https://github.com/openssl/openssl/archive/OpenSSL_1_1_0e.tar.gz"
@@ -82,10 +82,11 @@ function install {
   cd "$WORK_SPACE"
   echo "installing $package..."
   {
-    echo "=========INSTALLING $package=========" &&
+    echo "\n=========INSTALLING $package=========\n" &&
     mkdir -p "$package" &&
     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-    ${CD:-cd "$package"} &&
+    cd "$package" &&
+    ${PRE_CONFIGURE:-:} &&
     ${CONFIGURE:-./configure} &&
     ${MAKE:-make} &&
     make install
@@ -111,11 +112,12 @@ function install_package {
     install "zlib"
   CONFIGURE="./config --prefix="$INSTALL_DIR" shared zlib-dynamic" \
     install "openssl"
+  PRE_CONFIGURE="autoconf" \
   CONFIGURE="./configure --with-ssl="$INSTALL_DIR" --prefix="$INSTALL_DIR"" \
     install "curl"
   CONFIGURE="./configure --prefix="$INSTALL_DIR" --disable-static" \
     install "expat"
-  CD="cd git && make configure" \
+  PRE_CONFIGURE="make configure" \
   CONFIGURE="./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR"" \
   MAKE="make CURLDIR="$INSTALL_DIR"" \
     install "git"
