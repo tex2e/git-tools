@@ -82,7 +82,8 @@ function install {
   cd "$WORK_SPACE"
   echo "installing $package..."
   {
-    echo "\n=========INSTALLING $package=========\n" &&
+    echo &&
+    echo "=========INSTALLING $package=========" &&
     mkdir -p "$package" &&
     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
     cd "$package" &&
