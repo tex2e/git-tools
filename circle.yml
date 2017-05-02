@@ -8,4 +8,4 @@ test:
   pre:
     - cat /tmp/git-tools/install.log
   post:
-    - ./git-tools test
+    - LD_LIBRARY_PATH=:/home/ubuntu/git-tools/lib ./git-tools test
