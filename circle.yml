@@ -2,4 +2,4 @@ test:
   override:
     - ./git-tools unpack
   post:
-    - ./git-tools test || { echo "\n\n\n"; cat /tmp/git-tools/install.log }
+    - ./git-tools test
