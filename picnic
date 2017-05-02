@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# picnic - deploy git without sudo/root
+# git-tools - deploy git without sudo/root
 #
 
 INSTALL_DIR=${INSTALL_DIR:-"$HOME/git-tools"}
-WORK_SPACE=${WORK_SPACE:-"/tmp/picnic"}
+WORK_SPACE=${WORK_SPACE:-"/tmp/git-tools"}
 LOGFILE="$WORK_SPACE/install.log"
 
 function warn {
@@ -43,29 +43,35 @@ function check_os {
 }
 
 # <package> := curl | expat | git | openssl | zlib
-package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz" # 404
-package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
-package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
-package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
-package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
+# package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz" # 404
+# package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
+# package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
+# package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
+# package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
+
+# <package> := curl | expat | git | openssl | zlib
+package_curl="https://github.com/curl/curl/releases/download/curl-7_54_0/curl-7.54.0.tar.gz"
+package_expat="https://downloads.sourceforge.net/project/expat/expat/2.2.0/expat-2.2.0.tar.bz2?r=&ts=1493719539&use_mirror=jaist"
+package_git="https://github.com/git/git/archive/v2.12.2.tar.gz"
+package_openssl="https://github.com/openssl/openssl/archive/OpenSSL_1_1_0e.tar.gz"
+package_zlib="https://github.com/madler/zlib/archive/v1.2.11.tar.gz"
 
 # download <package>
 function download {
   local package=$1
   local package_url=$(eval echo '$package_'$1)
-  wget -O "$package.tar.gz" "$package_url" &>/dev/null &&
+  wget -O "$package.tar.gz" "$package_url"
   success "download source file: $package.tar.gz"
 }
 
 function download_package {
   cd "$WORK_SPACE"
   # ordered by file size
-  download "curl" &
-  download "git" &
-  download "openssl" &
-  download "zlib" &
-  download "expat" &
-  wait
+  download "curl"
+  download "git"
+  download "openssl"
+  download "zlib"
+  download "expat"
 }
 
 # install <package>
@@ -79,7 +85,7 @@ function install {
     echo "=========INSTALLING $package=========" &&
     mkdir -p "$package" &&
     tar zxf "$tar_package" -C "$package" --strip-components 1 &&
-    cd "$package" &&
+    ${CD:-cd "$package"} &&
     ${CONFIGURE:-./configure} &&
     ${MAKE:-make} &&
     make install
@@ -99,7 +105,7 @@ function install {
 #
 function install_package {
   export CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LD_LIBRARY_PATH="$INSTALL_DIR/lib"
-  echo "picnic unpack $(date)" > "$LOGFILE"
+  echo "git-tools unpack $(date)" > "$LOGFILE"
 
   CONFIGURE="./configure --prefix="$INSTALL_DIR"" \
     install "zlib"
@@ -109,22 +115,24 @@ function install_package {
     install "curl"
   CONFIGURE="./configure --prefix="$INSTALL_DIR" --disable-static" \
     install "expat"
+  CD="cd git && make configure" \
   CONFIGURE="./configure --prefix="$INSTALL_DIR" --with-expat="$INSTALL_DIR" --with-curl="$INSTALL_DIR"" \
   MAKE="make CURLDIR="$INSTALL_DIR"" \
     install "git"
 
   echo "You will need to manually adapt your shell's environment"
-  echo "to work with picnic-tools."
+  echo "to work with git-tools."
   echo "Add $INSTALL_DIR/bin to your PATH."
   echo ""
   echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
   echo ""
 }
 
+# ==============================================================================
 # SUBCOMMANDS
 
 # download source file only
-function picnic-getpack {
+function git-tools-getpack {
   check_os
   mkdir -p "$WORK_SPACE"
   download_package
@@ -132,7 +140,7 @@ function picnic-getpack {
 }
 
 # download and install packages
-function picnic-unpack {
+function git-tools-unpack {
   check_os
   mkdir -p "$INSTALL_DIR"
   mkdir -p "$WORK_SPACE"
@@ -140,25 +148,20 @@ function picnic-unpack {
   install_package
 }
 
-# reinstall packages
-function picnic-reunpack {
-  picnic-remove
-  picnic-unpack
-}
-
 # remove packages
-function picnic-remove {
+function git-tools-remove {
   test -d "$INSTALL_DIR" && rm -rf "$INSTALL_DIR"
   test -d "$WORK_SPACE"  && rm -rf "$WORK_SPACE"
 }
 
 # show version and help
-function picnic-help {
-  echo "picnic-1.1.0"
+function git-tools-help {
+  echo "git-tools"
   echo "  unpack: install from source"
   echo "  remove: remove files"
 }
 
+# ==============================================================================
 # MAIN
 
 SUBCOMMAND=""
@@ -167,7 +170,7 @@ while [ $# -gt 0 ]
 do
   case "$1" in
   --help | --version | -V )
-    picnic-help
+    git-tools-help
     exit 0
     ;;
   * )
@@ -184,7 +187,7 @@ done
 function invoke_subcommand {
   local SUBCOMMAND="${@:1:1}"
   local ARGS=( "${@:2}" )
-  local ACTION="picnic-${SUBCOMMAND:-help}"
+  local ACTION="git-tools-${SUBCOMMAND:-help}"
   if type "$ACTION" &>/dev/null; then
     "$ACTION" "${ARGS[@]}"
   else
