@@ -3,7 +3,7 @@
 # picnic - deploy git without sudo/root
 #
 
-INSTALL_DIR=${INSTALL_DIR:-"$HOME/picnic-tools"}
+INSTALL_DIR=${INSTALL_DIR:-"$HOME/git-tools"}
 WORK_SPACE=${WORK_SPACE:-"/tmp/picnic"}
 LOGFILE="$WORK_SPACE/install.log"
 
@@ -43,11 +43,11 @@ function check_os {
 }
 
 # <package> := curl | expat | git | openssl | zlib
-package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz"
+package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz" # 404
 package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
-package_git="https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.gz"
-package_openssl="https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
-package_zlib="http://zlib.net/zlib-1.2.8.tar.gz"
+package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
+package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
+package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
 
 # download <package>
 function download {
