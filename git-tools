@@ -124,13 +124,13 @@ function install_package {
   CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic" \
     install "openssl"
   PRE_CONFIGURE="autoconf" \
-  CONFIGURE="./configure --with-ssl=$INSTALL_DIR --prefix=$INSTALL_DIR" \
+  CONFIGURE="./configure --prefix=$INSTALL_DIR --with-ssl=$INSTALL_DIR" \
     install "curl"
   CONFIGURE="./configure --prefix=$INSTALL_DIR --disable-static" \
     install "expat"
   PRE_CONFIGURE="make configure" \
-  CONFIGURE="./configure --prefix=$INSTALL_DIR --with-expat=$INSTALL_DIR --with-curl=$INSTALL_DIR" \
-  MAKE="make CURLDIR=$INSTALL_DIR" \
+  CONFIGURE="./configure --prefix=$INSTALL_DIR --with-expat=$INSTALL_DIR --with-curl=$INSTALL_DIR -Wl -rpath=$INSTALL_DIR/lib " \
+  MAKE="make EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
     install "git"
 
   echo "You will need to manually add following commands to bashrc or zshrc"
