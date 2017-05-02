@@ -111,10 +111,10 @@ function install_package {
 
   CONFIGURE="./configure --prefix=$INSTALL_DIR" \
     install "zlib"
-  CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic --openssldir=$INSTALL_DIR/ssl" \
+  CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic" \
     install "openssl"
   PRE_CONFIGURE="autoconf" \
-  CONFIGURE="./configure --with-ssl=$INSTALL_DIR/ssl --prefix=$INSTALL_DIR" \
+  CONFIGURE="./configure --with-ssl=$INSTALL_DIR --prefix=$INSTALL_DIR" \
     install "curl"
   CONFIGURE="./configure --prefix=$INSTALL_DIR --disable-static" \
     install "expat"
