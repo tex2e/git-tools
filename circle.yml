@@ -3,8 +3,8 @@ compile:
     - ./git-tools unpack
 test:
   override:
-    - ./tree $HOME/git-tools/lib
-    - ./tree $HOME/git-tools/bin
+    - ls $HOME/git-tools/lib
+    - ls $HOME/git-tools/bin
   pre:
     - cat /tmp/git-tools/install.log
   post:
