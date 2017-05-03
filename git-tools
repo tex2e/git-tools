@@ -135,11 +135,11 @@ function install_package {
 
   # create wrapper command to export LD_LIBRARY_PATH
   mv "$INSTALL_DIR/bin/git" "$INSTALL_DIR/bin/git_"
-  cat <<- EOF > "$INSTALL_DIR/bin/git"
-  #/bin/sh
-  export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
-  $INSTALL_DIR/bin/git_ \$*
-  EOF
+  cat <<EOF > "$INSTALL_DIR/bin/git"
+#/bin/sh
+export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
+$INSTALL_DIR/bin/git_ \$*
+EOF
   chmod +x "$INSTALL_DIR/bin/git"
 
   echo "You will need to manually add following commands to bashrc or zshrc"
