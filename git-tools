@@ -106,19 +106,14 @@ function install {
 #   └── expat
 #
 function install_package {
+  echo "git-tools unpack $(date)" > "$LOGFILE"
+
   export CPPFLAGS="-I$INSTALL_DIR/include"
   export LDFLAGS="-L$INSTALL_DIR/lib"
   export LD_LIBRARY_PATH="$INSTALL_DIR/lib"
   export PKG_CONFIG_PATH="$INSTALL_DIR/lib/pkgconfig"
 
-  {
-    echo "git-tools unpack $(date)"
-    echo "CPPFLAGS=$CPPFLAGS"
-    echo "LDFLAGS=$LDFLAGS"
-    echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
-    echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-  } > "$LOGFILE"
-
+  # Install
   CONFIGURE="./configure --prefix=$INSTALL_DIR" \
     install "zlib"
   CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic" \
@@ -133,7 +128,8 @@ function install_package {
   MAKE="make EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
     install "git"
 
-  # create wrapper command to export LD_LIBRARY_PATH
+  # Create wrapper command to export LD_LIBRARY_PATH
+  # git -> git_
   mv "$INSTALL_DIR/bin/git" "$INSTALL_DIR/bin/git_"
   cat <<EOF > "$INSTALL_DIR/bin/git"
 #/bin/sh
@@ -141,21 +137,26 @@ export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
 $INSTALL_DIR/bin/git_ \$*
 EOF
   chmod +x "$INSTALL_DIR/bin/git"
+  test -x "$INSTALL_DIR/bin/git" &&
+  test -x "$INSTALL_DIR/bin/git_" &&
+  success "create git command wrapper"
 
-  echo "You will need to manually add following commands to bashrc or zshrc"
-  echo "in order to work with git-tools."
-  echo ""
-  echo "    if [ -d \"$INSTALL_DIR\" ]; then"
-  echo "      export PATH=\"\$PATH:$INSTALL_DIR/bin\""
-  echo "      export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:$INSTALL_DIR/lib\""
-  echo "    fi"
-  echo ""
+  if echo $PATH | grep "$HOME/git-tools/bin" &> /dev/null; then
+    echo "You will need to manually add following commands to bashrc or zshrc"
+    echo "in order to work with git-tools."
+    echo ""
+    echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
+    echo ""
+  else
+    success "your system is ready to git!"
+  fi
+
 }
 
 # ==============================================================================
 # SUBCOMMANDS
 
-# download source file only
+# Download source file only
 function git-tools-getpack {
   check_os
   mkdir -p "$WORK_SPACE"
@@ -163,7 +164,7 @@ function git-tools-getpack {
   success "source file downloaded."
 }
 
-# download and install packages
+# Download and install packages
 function git-tools-unpack {
   check_os
   mkdir -p "$INSTALL_DIR"
@@ -172,13 +173,13 @@ function git-tools-unpack {
   install_package
 }
 
-# remove packages
+# Remove packages
 function git-tools-remove {
   test -d "$INSTALL_DIR" && rm -rf "$INSTALL_DIR"
   test -d "$WORK_SPACE"  && rm -rf "$WORK_SPACE"
 }
 
-# show version and help
+# Show help
 function git-tools-help {
   echo "git-tools"
   echo "  unpack: install from source"
