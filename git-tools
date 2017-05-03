@@ -108,17 +108,21 @@ function install_package {
 
   # Install
   CONFIGURE="./configure --prefix=$INSTALL_DIR" \
+  MAKE="make -j 2" \
     install "zlib"
   CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic" \
+  MAKE="make -j 2" \
     install "openssl"
   PRE_CONFIGURE="autoconf" \
   CONFIGURE="./configure --prefix=$INSTALL_DIR --with-ssl=$INSTALL_DIR" \
+  MAKE="make -j 2" \
     install "curl"
   CONFIGURE="./configure --prefix=$INSTALL_DIR --disable-static" \
+  MAKE="make -j 2" \
     install "expat"
   PRE_CONFIGURE="make configure" \
   CONFIGURE="./configure --prefix=$INSTALL_DIR --with-expat=$INSTALL_DIR --with-curl=$INSTALL_DIR" \
-  MAKE="make EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
+  MAKE="make -j 2 EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
     install "git"
 
   # Create wrapper command to export LD_LIBRARY_PATH
