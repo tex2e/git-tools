@@ -6,6 +6,7 @@ test:
     - ls $HOME/git-tools/lib
     - ls $HOME/git-tools/bin
     - cat $HOME/git-tools/bin/git
+    - echo $PATH
   pre:
     - cat /tmp/git-tools/install.log
   post:

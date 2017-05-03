@@ -43,13 +43,6 @@ function check_os {
 }
 
 # <package> := curl | expat | git | openssl | zlib
-# package_curl="http://www.execve.net/curl/curl-7.48.0.tar.gz" # 404
-# package_expat="http://osdn.jp/frs/g_redir.php?m=kent&f=%2Fexpat%2Fexpat%2F2.1.0%2Fexpat-2.1.0.tar.gz"
-# package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
-# package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
-# package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
-
-# <package> := curl | expat | git | openssl | zlib
 package_curl="https://curl.haxx.se/download/curl-7.54.0.tar.gz"
 package_expat="https://sourceforge.net/projects/expat/files/expat/2.1.0/expat-2.1.0.tar.gz/download"
 package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
@@ -61,7 +54,7 @@ function download {
   local package=$1
   local package_url=$(eval echo '$package_'$1)
   wget -O "$package.tar.gz" "$package_url"
-  success "download source file: $package.tar.gz"
+  success "download source file: $WORK_SPACE/$package.tar.gz"
 }
 
 function download_package {
@@ -130,27 +123,29 @@ function install_package {
 
   # Create wrapper command to export LD_LIBRARY_PATH
   # git -> git_
-  mv "$INSTALL_DIR/bin/git" "$INSTALL_DIR/bin/git_"
-  cat <<EOF > "$INSTALL_DIR/bin/git"
+  if [[ -x "$INSTALL_DIR/bin/git" ]]; then
+    mv "$INSTALL_DIR/bin/git" "$INSTALL_DIR/bin/git_"
+    cat <<EOF > "$INSTALL_DIR/bin/git"
 #/bin/sh
 export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
 $INSTALL_DIR/bin/git_ \$*
 EOF
-  chmod +x "$INSTALL_DIR/bin/git"
-  test -x "$INSTALL_DIR/bin/git" &&
-  test -x "$INSTALL_DIR/bin/git_" &&
-  success "create git command wrapper"
+    chmod +x "$INSTALL_DIR/bin/git"
+    success "creating git command wrapper"
+  else
+    error "no such a file: $INSTALL_DIR/bin/git"
+    exit
+  fi
 
-  if echo $PATH | grep "$HOME/git-tools/bin" &> /dev/null; then
+  if echo "$PATH" | grep "$HOME/git-tools/bin" &> /dev/null; then
     echo "You will need to manually add following commands to bashrc or zshrc"
     echo "in order to work with git-tools."
     echo ""
     echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
     echo ""
   else
-    success "your system is ready to git!"
+    echo "your system is ready to git!"
   fi
-
 }
 
 # ==============================================================================
