@@ -138,13 +138,13 @@ EOF
   fi
 
   if echo "$PATH" | grep "$HOME/git-tools/bin" &> /dev/null; then
+    echo "Your system is ready to git!"
+  else
     echo "You will need to manually add following commands to bashrc or zshrc"
     echo "in order to work with git-tools."
     echo ""
     echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
     echo ""
-  else
-    echo "your system is ready to git!"
   fi
 }
 
