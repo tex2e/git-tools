@@ -133,6 +133,15 @@ function install_package {
   MAKE="make EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
     install "git"
 
+  # create wrapper command to export LD_LIBRARY_PATH
+  mv "$INSTALL_DIR/bin/git" "$INSTALL_DIR/bin/git_"
+  cat <<- EOF > "$INSTALL_DIR/bin/git"
+  #/bin/sh
+  export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
+  $INSTALL_DIR/bin/git_ \$*
+  EOF
+  chmod +x "$INSTALL_DIR/bin/git"
+
   echo "You will need to manually add following commands to bashrc or zshrc"
   echo "in order to work with git-tools."
   echo ""
@@ -178,6 +187,8 @@ function git-tools-help {
 
 function git-tools-test {
   $INSTALL_DIR/bin/git --version
+  $INSTALL_DIR/bin/git init
+  $INSTALL_DIR/bin/git status
 }
 
 # ==============================================================================
