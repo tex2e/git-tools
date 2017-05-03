@@ -129,7 +129,7 @@ function install_package {
   CONFIGURE="./configure --prefix=$INSTALL_DIR --disable-static" \
     install "expat"
   PRE_CONFIGURE="make configure" \
-  CONFIGURE="./configure --prefix=$INSTALL_DIR --with-expat=$INSTALL_DIR --with-curl=$INSTALL_DIR -Wl -rpath=$INSTALL_DIR/lib " \
+  CONFIGURE="LIBS= ./configure --prefix=$INSTALL_DIR --with-expat=$INSTALL_DIR --with-curl=$INSTALL_DIR" \
   MAKE="make EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
     install "git"
 
