@@ -42,12 +42,12 @@ function check_os {
   esac
 }
 
-# <package> := curl | expat | git | openssl | zlib
+# <package> := zlib | openssl | curl | expat | git
+package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
 package_curl="https://curl.haxx.se/download/curl-7.54.0.tar.gz"
+package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
 package_expat="https://sourceforge.net/projects/expat/files/expat/2.1.0/expat-2.1.0.tar.gz/download"
 package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
-package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
-package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
 
 # download <package>
 function download {
