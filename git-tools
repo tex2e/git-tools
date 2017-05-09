@@ -101,7 +101,7 @@ function install {
 function install_package {
   echo "git-tools unpack $(date)" > "$LOGFILE"
 
-  export CPPFLAGS="-I$INSTALL_DIR/include"
+  export CFLAGS="-I$INSTALL_DIR/include"
   export LDFLAGS="-L$INSTALL_DIR/lib"
   export LD_LIBRARY_PATH="$INSTALL_DIR/lib"
   export PKG_CONFIG_PATH="$INSTALL_DIR/lib/pkgconfig"
@@ -113,7 +113,6 @@ function install_package {
   CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic" \
   MAKE="make -j 2" \
     install "openssl"
-  PRE_CONFIGURE="autoconf" \
   CONFIGURE="./configure --prefix=$INSTALL_DIR --with-ssl=$INSTALL_DIR" \
   MAKE="make -j 2" \
     install "curl"
