@@ -3,6 +3,8 @@
 # git-tools - deploy git without sudo/root
 #
 
+set -e
+
 INSTALL_DIR=${INSTALL_DIR:-"$HOME/git-tools"}
 WORK_SPACE=${WORK_SPACE:-"/tmp/git-tools"}
 LOGFILE="$WORK_SPACE/install.log"
@@ -42,12 +44,13 @@ function check_os {
   esac
 }
 
-# <package> := zlib | openssl | curl | expat | git
+# <package> := autoconf | zlib | openssl | curl | expat | git
+package_autoconf="ftp://alpha.gnu.org/pub/gnu/autoconf/autoconf-2.68b.tar.gz"
 package_zlib="http://zlib.net/zlib-1.2.11.tar.gz"
 package_curl="https://curl.haxx.se/download/curl-7.54.0.tar.gz"
 package_openssl="https://www.openssl.org/source/openssl-1.1.0e.tar.gz"
 package_expat="https://sourceforge.net/projects/expat/files/expat/2.1.0/expat-2.1.0.tar.gz/download"
-package_git="https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.gz"
+package_git="https://www.kernel.org/pub/software/scm/git/git-2.13.0.tar.gz"
 
 # download <package>
 function download {
@@ -59,7 +62,7 @@ function download {
 
 function download_package {
   cd "$WORK_SPACE"
-  # ordered by file size
+  download "autoconf"
   download "curl"
   download "git"
   download "openssl"
@@ -93,6 +96,7 @@ function install {
 # dependencies tree
 #
 #   git
+#   ├── autoconf
 #   ├── curl
 #   │   └── openssl
 #   │       └── zlib
@@ -101,6 +105,7 @@ function install {
 function install_package {
   echo "git-tools unpack $(date)" > "$LOGFILE"
 
+  export PATH="$PATH:$HOME/git-tools/bin"
   export CFLAGS="-I$INSTALL_DIR/include"
   export LDFLAGS="-L$INSTALL_DIR/lib"
   export LD_LIBRARY_PATH="$INSTALL_DIR/lib"
@@ -109,19 +114,22 @@ function install_package {
   # Install
   CONFIGURE="./configure --prefix=$INSTALL_DIR" \
   MAKE="make -j 2" \
-    install "zlib"
-  CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic" \
+    install "autoconf"
+  CONFIGURE="./configure --prefix=$INSTALL_DIR" \
   MAKE="make -j 2" \
+    install "zlib"
+  CONFIGURE="./config --prefix=$INSTALL_DIR shared zlib-dynamic -I$INSTALL_DIR/include" \
+  MAKE="make -j 4" \
     install "openssl"
   CONFIGURE="./configure --prefix=$INSTALL_DIR --with-ssl=$INSTALL_DIR" \
-  MAKE="make -j 2" \
+  MAKE="make -j 4" \
     install "curl"
   CONFIGURE="./configure --prefix=$INSTALL_DIR --disable-static" \
   MAKE="make -j 2" \
     install "expat"
   PRE_CONFIGURE="make configure" \
   CONFIGURE="./configure --prefix=$INSTALL_DIR --with-expat=$INSTALL_DIR --with-curl=$INSTALL_DIR" \
-  MAKE="make -j 2 EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
+  MAKE="make -j 4 EXPATDIR=$INSTALL_DIR CURLDIR=$INSTALL_DIR" \
     install "git"
 
   # Create wrapper command to export LD_LIBRARY_PATH
@@ -140,15 +148,11 @@ EOF
     exit
   fi
 
-  if echo "$PATH" | grep "$HOME/git-tools/bin" &> /dev/null; then
-    echo "Your system is ready to git!"
-  else
-    echo "You will need to manually add following commands to bashrc or zshrc"
-    echo "in order to work with git-tools."
-    echo ""
-    echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
-    echo ""
-  fi
+  echo "You will need to manually add following commands to bashrc or zshrc"
+  echo "in order to work with git-tools."
+  echo ""
+  echo "    export PATH=\"\$PATH:$INSTALL_DIR/bin\""
+  echo ""
 }
 
 # ==============================================================================
@@ -170,18 +174,28 @@ function git-tools-unpack {
   download_package
   install_package
 }
+function git-tools-install {
+  git-tools-unpack
+}
 
 # Remove packages
 function git-tools-remove {
+  if [ -d "$INSTALL_DIR/.git" ]; then
+    error "$INSTALL_DIR is under git versioning."
+    exit
+  fi
   test -d "$INSTALL_DIR" && rm -rf "$INSTALL_DIR"
   test -d "$WORK_SPACE"  && rm -rf "$WORK_SPACE"
+}
+function git-tools-uninstall {
+  git-tools-remove
 }
 
 # Show help
 function git-tools-help {
   echo "git-tools"
-  echo "  unpack: install from source"
-  echo "  remove: remove files"
+  echo "  unpack | install   -- install from source"
+  echo "  remove | uninstall -- remove files"
 }
 
 function git-tools-test {
