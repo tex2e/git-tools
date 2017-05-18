@@ -137,7 +137,7 @@ function install_package {
   if [[ -x "$INSTALL_DIR/bin/git" ]]; then
     mv "$INSTALL_DIR/bin/git" "$INSTALL_DIR/bin/git_"
     cat <<EOF > "$INSTALL_DIR/bin/git"
-#/bin/sh
+#!/bin/sh
 export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
 $INSTALL_DIR/bin/git_ \${@+"\$@"}
 EOF
